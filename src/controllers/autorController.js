@@ -1,7 +1,17 @@
-import { autor } from "../models/Autor.js";
+//! Controllers - Responsavel por definir o que AutorController vai fazer.
 
+import { autor } from "../models/Autor.js"; // Importação do Schema de Autor.
+// (Modelo De Organização de Daddos)
+
+// Classe AutorController
 class AutorController {
+  //Autor Controller Metodos - É responsavel realizar as ações de Autores, como:
+  // * Listar Autores - Listar Autores Por ID - Cadastrar Autor -
+  // * Atualizar Autor - Excluir Autor
+
   static async listarAutores(req, res, next) {
+    // * Lista todos os autores.
+    // Faz uma requisição GET na rota /autores
     try {
       const listaAutores = await autor.find({});
       res.status(200).json(listaAutores);
@@ -11,6 +21,8 @@ class AutorController {
   }
 
   static async listaAutoresByID(req, res, next) {
+    // * Lista autores por ID.
+    // Faz uma requisição GET na rota /autores/:id
     try {
       const autorEncontrado = await autor.findById(req.params.id);
       if (autorEncontrado !== null) {
@@ -24,6 +36,10 @@ class AutorController {
   }
 
   static async cadastrarAutor(req, res, next) {
+    // * Cadastra um novo autor.
+    // Faz uma requisição POST na rota /autores
+    // Informações da req no body da requisição em json.
+
     try {
       const novoAutor = await autor.create(req.body);
       res
@@ -35,6 +51,10 @@ class AutorController {
   }
 
   static async atualizarAutor(req, res, next) {
+    // * Atualiza os dados de um autor.
+    // Faz uma requisição PUT na rota /autores/:id
+    // Informações da req no body da requisição em json.
+
     try {
       await autor.findByIdAndUpdate(req.params.id, req.body);
       res.status(200).json({ message: "Autor atualizado com sucesso" });
@@ -44,6 +64,9 @@ class AutorController {
   }
 
   static async excluirAutor(req, res, next) {
+    // * Exclui um autor.
+    // Faz uma requisição DELETE na rota /autores/:id
+    // Informações da req no body da requisição em json.
     try {
       await autor.findByIdAndDelete(req.params.id);
       res.status(200).json({ message: "Autor excluido com sucesso" });
@@ -52,4 +75,4 @@ class AutorController {
     }
   }
 }
-export default AutorController;
+export default AutorController; // Exporta

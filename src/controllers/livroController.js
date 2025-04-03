@@ -1,3 +1,5 @@
+//! FUNÇÃO CONTROLLER PARA LIVRO
+
 import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
@@ -67,3 +69,4 @@ class LivroController {
 }
 
 export default LivroController;
+// Controller's - Aqui vai estar as ações da API nesse exemplo é o CRUD de LIVROS.
