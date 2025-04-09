@@ -1,7 +1,8 @@
 //! FUNÇÃO CONTROLLER PARA LIVRO
 
-import { autor } from "../models/Autor.js";
-import livro from "../models/Livro.js";
+import NotFound from "../erros/notFound.js";
+import { autor } from "../models/index.js";
+import { livro } from "../models/index.js";
 
 class LivroController {
   static async listarLivros(req, res, next) {
@@ -15,9 +16,15 @@ class LivroController {
 
   static async listarLivroByID(req, res, next) {
     try {
-      const id = req.params.id;
-      const livroEncontrado = await livro.findById(id);
-      res.status(200).json(livroEncontrado);
+      const livroEncontrado = await livro
+        .findById(req.params.id)
+        .populate("autor", "nome")
+        .exec();
+      if (livroEncontrado !== null) {
+        res.status(200).send(livroEncontrado);
+      } else {
+        next(new NotFound("ID do livro não localizado"));
+      }
     } catch (error) {
       next(error);
     }
@@ -39,9 +46,14 @@ class LivroController {
 
   static async atualizarLivro(req, res, next) {
     try {
-      const id = req.params.id;
-      await livro.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: "Livro Atualizado" });
+      const livroResultado = await livro.findByIdAndUpdate(req.params.id, {
+        $set: req.body,
+      });
+      if (livroResultado !== null) {
+        res.status(200).send({ message: "Livro atualizado com sucesso" });
+      } else {
+        next(new NaoEncontrado("Id do livro não localizado."));
+      }
     } catch (error) {
       next(error);
     }
@@ -49,9 +61,12 @@ class LivroController {
 
   static async excluirLivro(req, res, next) {
     try {
-      const id = req.params.id;
-      await livro.findByIdAndDelete(id);
-      res.status(200).json({ message: "Livro Excluido" });
+      const livroResultado = await livro.findByIdAndDelete(req.params.id);
+      if (livroResultado !== null) {
+        res.status(200).send({ message: "Livro removido com sucesso" });
+      } else {
+        next(new NaoEncontrado("Id do livro não localizado."));
+      }
     } catch (error) {
       next(error);
     }
@@ -69,4 +84,3 @@ class LivroController {
 }
 
 export default LivroController;
-// Controller's - Aqui vai estar as ações da API nesse exemplo é o CRUD de LIVROS.

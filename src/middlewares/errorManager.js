@@ -1,15 +1,19 @@
 import mongoose from "mongoose";
 import ErroBase from "../erros/erroBase.js";
-import BadRequest from "../erros/erroBadReq.js";
-import ErroValidation from "../erros/erroValidation.js";
+import ErroValidacao from "../erros/erroValidation.js";
+import RequisicaoIncorreta from "../erros/erroBadReq.js";
 
-function errorManager(error, req, res, next) {
-  if (error instanceof mongoose.Error.CastError) {
-    new BadRequest().enviarResposta(res);
-  } else if (error instanceof mongoose.Error.ValidationError) {
-    new ErroValidation(error).enviarResposta(res);
+// eslint-disable-next-line no-unused-vars
+function manipuladorDeErros(erro, req, res, next) {
+  if (erro instanceof mongoose.Error.CastError) {
+    new RequisicaoIncorreta().enviarResposta(res);
+  } else if (erro instanceof mongoose.Error.ValidationError) {
+    new ErroValidacao(erro).enviarResposta(res);
+  } else if (erro instanceof ErroBase) {
+    erro.enviarResposta(res);
   } else {
     new ErroBase().enviarResposta(res);
   }
 }
-export default errorManager;
+
+export default manipuladorDeErros;

@@ -1,6 +1,7 @@
 //! Controllers - Responsavel por definir o que AutorController vai fazer.
 
-import { autor } from "../models/Autor.js"; // Importação do Schema de Autor.
+import NotFound from "../erros/notFound.js";
+import { autor } from "../models/index.js";
 // (Modelo De Organização de Daddos)
 
 // Classe AutorController
@@ -28,7 +29,7 @@ class AutorController {
       if (autorEncontrado !== null) {
         res.status(200).send(autorEncontrado);
       } else {
-        res.status(404).send({ message: "Id do Autor não localizado." });
+        next(new NotFound("Id do Autor não localizado."));
       }
     } catch (error) {
       next(error);
@@ -39,7 +40,6 @@ class AutorController {
     // * Cadastra um novo autor.
     // Faz uma requisição POST na rota /autores
     // Informações da req no body da requisição em json.
-
     try {
       const novoAutor = await autor.create(req.body);
       res
@@ -56,8 +56,14 @@ class AutorController {
     // Informações da req no body da requisição em json.
 
     try {
-      await autor.findByIdAndUpdate(req.params.id, req.body);
-      res.status(200).json({ message: "Autor atualizado com sucesso" });
+      const autorResultado = await autor.findByIdAndUpdate(req.params.id, {
+        $set: req.body,
+      });
+      if (autorResultado !== null) {
+        res.status(200).send({ message: "Autor atualizado com sucesso" });
+      } else {
+        next(new NotFound("ID do autor não localizado"));
+      }
     } catch (error) {
       next(error);
     }
@@ -68,8 +74,12 @@ class AutorController {
     // Faz uma requisição DELETE na rota /autores/:id
     // Informações da req no body da requisição em json.
     try {
-      await autor.findByIdAndDelete(req.params.id);
-      res.status(200).json({ message: "Autor excluido com sucesso" });
+      const autorResultado = await autor.findByIdAndDelete(req.params.id);
+      if (autorResultado !== null) {
+        res.status(200).send({ message: "Autor excluido com sucesso" });
+      } else {
+        next(new NotFound("ID do autor não localizado"));
+      }
     } catch (error) {
       next(error);
     }
