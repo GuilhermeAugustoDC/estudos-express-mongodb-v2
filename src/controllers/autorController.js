@@ -14,8 +14,9 @@ class AutorController {
     // * Lista todos os autores.
     // Faz uma requisição GET na rota /autores
     try {
-      const listaAutores = await autor.find({});
-      res.status(200).json(listaAutores);
+      const listaAutores = autor.find({});
+      req.resultado = listaAutores;
+      next()
     } catch (error) {
       next(error);
     }
